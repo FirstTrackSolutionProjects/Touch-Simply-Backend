@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const mysql = require("mysql2/promise");
 
 const sequelize = require("./config/config");
 
@@ -26,10 +27,36 @@ app.get("/", (req, res) => {
     res.send("API is running...");
 });
 
-sequelize.sync({alter:true}).then(() => {
-    console.log("Database synced");
-    app.listen(process.env.PORT, () => {
-        console.log(`Server running on port ${process.env.PORT}`);
+const startServer = async () => {
+  try {
+    // 1. Connect to MySQL without a database to ensure it exists
+    const connection = await mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      port: process.env.DB_PORT,
     });
-})
-    .catch((err) => console.error(err));
+    
+    await connection.query(
+      `CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`
+    );
+    await connection.end();
+    console.log(`Database verified: ${process.env.DB_NAME}`);
+
+    // 2. Now authenticate and sync with Sequelize
+    await sequelize.authenticate();
+    console.log("Database connected ✅");
+
+    await sequelize.sync({ alter: true });
+    console.log("Database synced");
+
+    app.listen(process.env.PORT, () => {
+      console.log(`Server running on port ${process.env.PORT}`);
+    });
+  } catch (err) {
+    console.error("Unable to start the server:", err);
+    process.exit(1);
+  }
+};
+
+startServer();
