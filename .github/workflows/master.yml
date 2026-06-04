@@ -32,6 +32,11 @@ jobs:
       - name: Build SAM Application
         run: |
           sam build
+      
+      - name: Install Dependencies
+        run: npm install
+
+      
 
       - name: Deploy SAM Application
         run: |
@@ -48,3 +53,7 @@ jobs:
               JwtSecret=${{ vars.JWT_SECRET }} \
               NodeEnv=${{ vars.NODE_ENV }} \
               Port=${{ vars.PORT }} 
+
+      - name: Run Sequelize Migrations
+        run: npx sequelize-cli db:migrate --url ${{ vars.DATABASE_URL}}
+
