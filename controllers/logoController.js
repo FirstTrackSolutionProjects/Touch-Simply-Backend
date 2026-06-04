@@ -1,4 +1,4 @@
-const Logo = require("../models/Logo");
+const { Logo } = require("../models");
 
 
 // CREATE LOGO
@@ -25,6 +25,7 @@ exports.createLogo = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -53,6 +54,7 @@ exports.getAllLogos = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -88,6 +90,7 @@ exports.getSingleLogo = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -126,6 +129,7 @@ exports.updateLogo = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -163,6 +167,7 @@ exports.deleteLogo = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({

@@ -2,9 +2,9 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Download extends Model {
+  class Library extends Model {
     static associate(db) {
-      Download.belongsTo(db.User, {
+      Library.belongsTo(db.User, {
         foreignKey: 'user_id',
         as: 'user',
         onDelete: 'CASCADE',
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  Download.init(
+  Library.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -21,14 +21,19 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
 
-      type: {
+      itemType: {
         type: DataTypes.STRING(100),
-        allowNull: false,
+        allowNull: true,
+      },
+
+      itemId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
 
       fileUrl: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
 
       user_id: {
@@ -38,13 +43,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Download',
-      tableName: 'downloads',
+      modelName: 'Library',
+      tableName: 'libraries',
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     }
   );
 
-  return Download;
+  return Library;
 };

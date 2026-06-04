@@ -1,4 +1,4 @@
-const Portfolio = require("../models/Portfolio");
+const { Portfolio } = require("../models");
 
 
 // CREATE PORTFOLIO
@@ -11,6 +11,7 @@ exports.createPortfolio = async (req, res) => {
       data,
       desc,
       template,
+      fileUrl,
     } = req.body;
 
     const portfolio = await Portfolio.create({
@@ -19,6 +20,7 @@ exports.createPortfolio = async (req, res) => {
       data,
       desc,
       template,
+      fileUrl,
       UserId: req.user.id,
     });
 
@@ -29,6 +31,7 @@ exports.createPortfolio = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -39,8 +42,7 @@ exports.createPortfolio = async (req, res) => {
 };
 
 
-
-// GET ALL PORTFOLIOS
+// GET USER PORTFOLIOS
 exports.getAllPortfolios = async (req, res) => {
   try {
 
@@ -57,6 +59,7 @@ exports.getAllPortfolios = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -65,7 +68,6 @@ exports.getAllPortfolios = async (req, res) => {
     });
   }
 };
-
 
 
 // GET SINGLE PORTFOLIO
@@ -92,6 +94,7 @@ exports.getSinglePortfolio = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -100,7 +103,6 @@ exports.getSinglePortfolio = async (req, res) => {
     });
   }
 };
-
 
 
 // UPDATE PORTFOLIO
@@ -130,6 +132,7 @@ exports.updatePortfolio = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
@@ -138,7 +141,6 @@ exports.updatePortfolio = async (req, res) => {
     });
   }
 };
-
 
 
 // DELETE PORTFOLIO
@@ -167,6 +169,7 @@ exports.deletePortfolio = async (req, res) => {
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({

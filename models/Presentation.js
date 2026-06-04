@@ -2,34 +2,34 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Portfolio extends Model {
+  class presentation extends Model {
     static associate(db) {
-      // Portfolio.belongsTo(db.UserRole, {
+      // presentation.belongsTo(db.UserRole, {
       //   foreignKey: 'user_role_id',
       //   as: 'userRole',
       //   onDelete: 'CASCADE',
       //   onUpdate: 'CASCADE',
       // });
 
-      // Portfolio.belongsTo(db.Portfolio, {
-      //   foreignKey: 'parent_Portfolio_id',
-      //   as: 'parentPortfolio',
+      // presentation.belongsTo(db.presentation, {
+      //   foreignKey: 'parent_presentation_id',
+      //   as: 'parentpresentation',
       //   onDelete: 'CASCADE',
       //   onUpdate: 'CASCADE',
       // });
-      // Portfolio.hasMany(db.Portfolio, {
-      //   foreignKey: 'parent_Portfolio_id',
-      //   as: 'childPortfolios',
+      // presentation.hasMany(db.presentation, {
+      //   foreignKey: 'parent_presentation_id',
+      //   as: 'childpresentations',
       // });
 
-      // Portfolio.hasMany(db.PortfolioPriceBreakup, {
-      //   foreignKey: 'Portfolio_id',
+      // presentation.hasMany(db.presentationPriceBreakup, {
+      //   foreignKey: 'presentation_id',
       //   as: 'priceBreakups',
       //   onDelete: 'CASCADE',
       //   onUpdate: 'CASCADE',
       // });
-      // Portfolio.hasMany(db.PortfolioRefund, {
-      //   foreignKey: 'Portfolio_id',
+      // presentation.hasMany(db.presentationRefund, {
+      //   foreignKey: 'presentation_id',
       //   as: 'refunds',
       //   onDelete: 'CASCADE',
       //   onUpdate: 'CASCADE',
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  Portfolio.init(
+  presentation.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -60,13 +60,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Portfolio',
-      tableName: 'portfolios',
+      modelName: 'presentation',
+      tableName: 'presentations',
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     }
   );
 
-  return Portfolio;
+  return presentation;
 };

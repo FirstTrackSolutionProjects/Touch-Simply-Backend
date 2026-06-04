@@ -1,80 +1,39 @@
-// const router = require("express").Router();
-
-// const authMiddleware = require("../middleware/authMiddleware");
-
-// const {
-//   createResume,
-//   getAllResumes,
-//   getSingleResume,
-//   updateResume,
-//   deleteResume,
-// } = require("../controllers/resumeController");
-
-
-// // CREATE
-// router.post("/", authMiddleware, createResume);
-
-
-// // GET ALL
-// router.get("/", authMiddleware, getAllResumes);
-
-
-// // GET SINGLE
-// router.get("/:id", authMiddleware, getSingleResume);
-
-
-// // UPDATE
-// router.put("/:id", authMiddleware, updateResume);
-
-
-// // DELETE
-// router.delete("/:id", authMiddleware, deleteResume);
-
-
-// module.exports = router;
-
-const express = require("express");
-
-const router = express.Router();
+const router = require("express").Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
+
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const {
   createResume,
   getUserResumes,
+  getAllResumes,
   getResumeById,
   updateResume,
   deleteResume,
 } = require("../controllers/resumeController");
 
-router.post(
-  "/create",
-  authMiddleware,
-  createResume
-);
 
-router.get(
-  "/user",
-  authMiddleware,
-  getUserResumes
-);
+// CREATE
+router.post("/", authMiddleware, createResume);
 
-router.get(
-  "/:id",
-  authMiddleware,
-  getResumeById
-);
+// GET USER RESUMES
+router.get("/user", authMiddleware, getUserResumes);
 
-router.put(
-  "/:id",
-  authMiddleware,
-  updateResume
-);
+// GET SINGLE
+router.get("/:id", authMiddleware, getResumeById);
 
-router.delete(
-  "/:id",
-  authMiddleware,
-  deleteResume
-);
+// UPDATE
+router.put("/:id", authMiddleware, updateResume);
+
+
+// DELETE
+router.delete("/:id", authMiddleware, deleteResume);
+
+
+// GET ALL
+router.get("/", authMiddleware, adminMiddleware, getAllResumes);
+
 
 module.exports = router;
+

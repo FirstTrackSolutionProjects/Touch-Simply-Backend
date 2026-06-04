@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  AwsAccessKeyId:
+    Type: String
+  AwsRegion:
+    Type: String
+    Default: ap-south-1
+  AwsSecretAccessKey:
+    Type: String
+  S3BucketName:
+    Type: String
+  DatabaseURL:
+    Type: String
+  JwtSecret:
+    Type: String
+  NodeEnv:
+    Type: String
+  Port:
+    Type: String
+
+Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: api
+
+  AppFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Runtime: nodejs24.x
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          AWS_ACCESS_KEY_ID_: !Ref AwsAccessKeyId
+          AWS_REGION_: !Ref AwsRegion
+          AWS_SECRET_ACCESS_KEY_: !Ref AwsSecretAccessKey
+          S3_BUCKET_NAME_: !Ref S3BucketName
+          DATABASE_URL: !Ref DatabaseURL
+          NODE_ENV: !Ref NodeEnv
+          JWT_SECRET: !Ref JwtSecret
+          PORT: !Ref Port
+      Events:
+        ProxyApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  AppFunctionArn:
+    Description: Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+        - AppFunction
+        - Arn
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value:
+      Fn::Sub: https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/api/
+

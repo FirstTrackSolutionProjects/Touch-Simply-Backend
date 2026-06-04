@@ -1,0 +1,50 @@
+name: Build and Deploy SAM Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: build-and-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID_ }}
+          aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY_ }}
+          aws-region: ${{ vars.AWS_REGION_ }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install SAM CLI
+        run: |
+          pip install aws-sam-cli
+
+      - name: Build SAM Application
+        run: |
+          sam build
+
+      - name: Deploy SAM Application
+        run: |
+          sam deploy \
+            --stack-name Touch-Simply-Backend \
+            --s3-bucket touch-simply-backend-sam \
+            --capabilities CAPABILITY_IAM \
+            --parameter-overrides \
+              AwsAccessKeyId=${{ vars.AWS_ACCESS_KEY_ID_ }} \
+              AwsSecretAccessKey=${{ vars.AWS_SECRET_ACCESS_KEY_ }} \
+              AwsRegion=${{ vars.AWS_REGION_ }} \
+              S3BucketName=${{ vars.S3_BUCKET_NAME }} \
+              DatabaseURL=${{ vars.DATABASE_URL }} \
+              JwtSecret=${{ vars.JWT_SECRET }} \
+              NodeEnv=${{ vars.NODE_ENV }} \
+              Port=${{ vars.PORT }} 
