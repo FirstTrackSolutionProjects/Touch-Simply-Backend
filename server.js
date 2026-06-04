@@ -4,6 +4,7 @@ const cors = require("cors");
 const path = require("path");
 
 
+
 const { sequelize }  = require("./models/index.js");
 
 const authRoutes = require("./routes/authRoutes");
@@ -13,6 +14,7 @@ const portfolioRoutes = require("./routes/portfolioRoutes");
 const logoRoutes = require("./routes/logoRoutes");
 
 const app = express();
+const serverless = require("serverless-http");
 
 app.use(cors());
 app.use(express.json());
@@ -85,4 +87,15 @@ const startServer = async () => {
   }
 };
 
-startServer();
+const isRunningInLambda = Boolean(
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.env.LAMBDA_TASK_ROOT ||
+    process.env.AWS_EXECUTION_ENV
+);
+
+module.exports.handler = serverless(app);
+
+if (!isRunningInLambda && require.main === module) {
+  startServer();
+}
+
