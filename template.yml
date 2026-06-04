@@ -28,7 +28,7 @@ Resources:
   AppFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app.handler
+      Handler: server.handler
       Runtime: nodejs24.x
       MemorySize: 512
       Timeout: 30
