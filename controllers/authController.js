@@ -225,6 +225,8 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
       phone,
+      role: "user",
+      isBlocked: false,
     });
 
     res.status(201).json({
@@ -302,7 +304,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-      
+        role: user.role,
       },
     });
 
