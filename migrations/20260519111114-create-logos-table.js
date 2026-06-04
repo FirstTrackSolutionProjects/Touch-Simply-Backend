@@ -26,10 +26,6 @@ module.exports = {
 
       UserId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
         onDelete: "CASCADE",
       },
 
@@ -44,7 +40,15 @@ module.exports = {
       },
 
     });
-
+    await queryInterface.addConstraint("logos", {
+      fields: ["UserId"],
+      type: "foreign key",
+      name: "logos_userId_fkey",
+      references: {
+        table: "users",
+        field: "id",
+      },
+    });
   },
 
   async down(queryInterface, Sequelize) {

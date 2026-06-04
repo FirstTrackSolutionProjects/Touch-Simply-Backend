@@ -35,10 +35,6 @@ module.exports = {
 
       UserId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
         onDelete: "CASCADE",
       },
 
@@ -52,6 +48,15 @@ module.exports = {
         type: Sequelize.DATE,
       },
 
+    });
+    await queryInterface.addConstraint("resumes", {
+      fields: ["UserId"],
+      type: "foreign key",
+      name: "resumes_userId_fkey",
+      references: {
+        table: "users",
+        field: "id",
+      },
     });
   },
 
