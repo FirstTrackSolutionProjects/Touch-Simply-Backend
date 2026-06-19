@@ -1,0 +1,11 @@
+{
+    "/": {
+        "folder1": {
+            "file1" : null
+        },
+        "folder2": {
+            "filex": null
+        },
+        "file": null,
+    }
+}

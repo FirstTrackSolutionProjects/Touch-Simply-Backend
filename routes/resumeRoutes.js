@@ -11,17 +11,31 @@ const {
   getResumeById,
   updateResume,
   deleteResume,
+  createResumeProjectWithTemplate,
+  compileResume,
+  getResume,
+  getResumeFileUrl,
+  getFileTreeHash,
 } = require("../controllers/resumeController");
 
 
 // CREATE
-router.post("/", authMiddleware, createResume);
+// router.post("/", authMiddleware, createResume);
+
+router.post("/template/:templateId", authMiddleware, createResumeProjectWithTemplate);
+
+router.patch('/:resumeId/compile', authMiddleware, compileResume);
+
+router.post('/:resumeId/file', authMiddleware, getResumeFileUrl);
 
 // GET USER RESUMES
 router.get("/user", authMiddleware, getUserResumes);
 
 // GET SINGLE
-router.get("/:id", authMiddleware, getResumeById);
+router.get('/:resumeId', authMiddleware, getResume)
+// router.get("/:id", authMiddleware, getResumeById);
+
+router.get('/:resumeId/hash', authMiddleware, getFileTreeHash)
 
 // UPDATE
 router.put("/:id", authMiddleware, updateResume);
