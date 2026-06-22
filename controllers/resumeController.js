@@ -1,9 +1,10 @@
 const { Resume } = require("../models");
 const { uuidv7 } = require("uuidv7")
-const { copyDirectory, generateGetSignedUrl, listDirectory, deleteDirectory } = require("../utils/aws_s3");
+const { copyDirectory, generateGetSignedUrl, listDirectory, deleteDirectory, generatePutSignedUrl, deleteFileFromS3 } = require("../utils/aws_s3");
 const path = require("path");
 const latexProcessorService = require("../services/latexProcessor/latexProcessor.service");
 const getS3Hash = require("../services/s3/getS3FileHash");
+
 
 // CREATE RESUME
 exports.createResume = async (req, res) => {
@@ -184,7 +185,7 @@ exports.getResume = async (req, res) => {
 exports.getResumeFileUrl = async (req, res) => {
   try {
     const resumeId = req.params.resumeId;
-    const filePath = req.body.filePath;
+    const filePath = req.query.filePath;
     if (!resumeId || !filePath) {
       return res.status(400).json({
         success: false,
@@ -222,6 +223,94 @@ exports.getResumeFileUrl = async (req, res) => {
     });
   }
 }
+exports.addResumeFileUrl = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const resumeId = req.params.resumeId;
+    const filePath = req.body.filePath;
+    const fileType = req.body.fileType; // e.g., 'pdf', 'image', etc.
+    if (!resumeId || !filePath || !fileType) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing resumeId, filePath, or fileType in the request parameters.",
+      });
+    }
+    const resume = await Resume.findOne({
+      where: {
+        id: resumeId,
+        user_id: userId,
+      },
+    });
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume Not Found",
+      });
+    }
+
+    const WORKSPACE_KEY = `users/${userId}/projects/${resumeId}/`;
+    const absoluteFilePath = path.join(WORKSPACE_KEY, filePath).replace(/\\/g, "/");
+
+    const putUrl = await generatePutSignedUrl(absoluteFilePath, fileType);
+
+    return res.status(200).json({
+      success: true,
+      message: "Put URL Generated Successfully",
+      data: {
+        putUrl,
+      }
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+}
+exports.deleteResumeFile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const resumeId = req.params.resumeId;
+    const filePath = req.body.filePath;
+    if (!resumeId || !filePath) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing resumeId or filePath in the request parameters.",
+      });
+    }
+
+    const resume = await Resume.findOne({
+      where: {
+        id: resumeId,
+        user_id: userId,
+      },
+    });
+    if (!resume) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume Not Found",
+      });
+    }
+    const WORKSPACE_KEY = `users/${userId}/projects/${resumeId}/`;
+    const absoluteFilePath = path.join(WORKSPACE_KEY, filePath).replace(/\\/g, "/");
+
+    await deleteFileFromS3(absoluteFilePath);
+
+    return res.status(200).json({
+      success: true,
+      message: "File Deleted Successfully",
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+}
+
+
 
 const populateTreeWithHashes = async (pathPrefix, node, currentPath = "") => {
   for (const key of Object.keys(node)) {

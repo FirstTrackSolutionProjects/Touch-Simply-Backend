@@ -26,7 +26,7 @@ router.post("/template/:templateId", authMiddleware, createResumeProjectWithTemp
 
 router.patch('/:resumeId/compile', authMiddleware, compileResume);
 
-router.post('/:resumeId/file', authMiddleware, getResumeFileUrl);
+router.get('/:resumeId/file', authMiddleware, getResumeFileUrl);
 
 // GET USER RESUMES
 router.get("/user", authMiddleware, getUserResumes);
@@ -47,6 +47,14 @@ router.delete("/:id", authMiddleware, deleteResume);
 
 // GET ALL
 router.get("/", authMiddleware, adminMiddleware, getAllResumes);
+
+// ADD RESUME FILE URL
+router.post("/:resumeId/file", authMiddleware, addResumeFileUrl);
+
+// DELETE RESUME FILE
+router.delete("/:resumeId/file", authMiddleware, deleteResumeFile);
+
+
 
 
 module.exports = router;

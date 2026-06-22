@@ -164,6 +164,15 @@ const deleteDirectory = async (prefix) => {
     }
 }
 
+const deleteFileFromS3 = async (key) => {
+  const command = new DeleteObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: key,
+  });
+
+  await s3.send(command);
+}
+
 
 module.exports = {
   s3,
@@ -173,4 +182,5 @@ module.exports = {
   copyDirectory,
   listDirectory,
   deleteDirectory,
+  deleteFileFromS3
 };
