@@ -1,14 +1,23 @@
 {
   "development": {
-    "username": "root",
-    "password": "ananya1234",
-    "database": "touchsimply",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "u817592344_touchsimply",
+    "password": "1e672741-8c79-43b3-9b1c-dafcdc5a184D",
+    "database": "u817592344_TouchSimply",
+    "host": "srv1828.hstgr.io",
+    "port": 3306,
+    "dialect": "mysql",
+    "logging": false
   },
   
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   }
 }
