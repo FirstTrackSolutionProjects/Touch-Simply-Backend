@@ -52,6 +52,8 @@ jobs:
               DatabaseURL=${{ vars.DATABASE_URL }} \
               JwtSecret=${{ vars.JWT_SECRET }} \
               NodeEnv=${{ vars.NODE_ENV }} \
+              GoogleClientId=${{ vars.GOOGLE_CLIENT_ID }} \
+              GoogleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }} \
               Port=${{ vars.PORT }} 
 
       - name: Run Sequelize Migrations

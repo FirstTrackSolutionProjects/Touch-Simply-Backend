@@ -18,6 +18,10 @@ Parameters:
     Type: String
   Port:
     Type: String
+  GoogleClientId:
+    Type: String
+  GoogleClientSecret:
+    Type: String
 
 Resources:
   ApiGateway:
@@ -42,6 +46,8 @@ Resources:
           NODE_ENV: !Ref NodeEnv
           JWT_SECRET: !Ref JwtSecret
           PORT: !Ref Port
+          GOOGLE_CLIENT_ID: !Ref GoogleClientId
+          GOOGLE_CLIENT_SECRET: !Ref GoogleClientSecret
       Events:
         ProxyApi:
           Type: Api
