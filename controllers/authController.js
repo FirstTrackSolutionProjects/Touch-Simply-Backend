@@ -145,7 +145,7 @@ exports.googleLogin = async (req, res) => {
     // 5. Check if user exists by email or googleId
     let user = await User.findOne({
       where: {
-        [Op.or]: [{ email }, { googleId }],
+        [Op.and]: [{ email }, { googleId }],
       },
     });
 
