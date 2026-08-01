@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 const generateToken = require("../services/jwtService");
 const { OAuth2Client } = require("google-auth-library");
+const { Op } = require("sequelize");
 
 // Initialize Google OAuth Client
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -107,43 +108,97 @@ exports.login = async (req, res) => {
 // GOOGLE LOGIN
 exports.googleLogin = async (req, res) => {
   try {
+    // 1. Check if token is provided
     const { tokenId } = req.body;
 
-    // Verify Google token
+    if (!tokenId) {
+      return res.status(400).json({
+        success: false,
+        message: "Google token is required",
+      });
+    }
+
+    // 2. Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: tokenId,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
+    // 3. Extract payload with all required fields
     const payload = ticket.getPayload();
-    const { name, email, picture } = payload;
+    const {
+      sub: googleId,
+      email,
+      name,
+      picture,
+      email_verified,
+    } = payload;
 
-    // Check if user exists
-    let user = await User.findOne({ where: { email } });
+    // 4. Verify email is confirmed by Google
+    if (!email_verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Google email is not verified. Please verify your email with Google.",
+      });
+    }
+
+    // 5. Check if user exists by email or googleId
+    let user = await User.findOne({
+      where: {
+        [Op.or]: [{ email }, { googleId }],
+      },
+    });
 
     if (!user) {
-      // Create new user with Google data
+      // 6. Create new user with Google data
       user = await User.create({
         name: name,
         email: email,
+        googleId: googleId,
+        provider: "google",
         password: null, // No password for Google users
         phone: null,
         role: "user",
         isBlocked: false,
+        googlePicture: picture || null,
       });
+    } else {
+      // 7. Update existing user if needed
+      const updates = {};
+
+      // If user exists by email but doesn't have googleId, link the Google account
+      if (!user.googleId) {
+        updates.googleId = googleId;
+        updates.provider = "google";
+      }
+
+      // Update name if empty or different (optional - only if you want to sync)
+      if (!user.name || user.name === "User") {
+        updates.name = name;
+      }
+
+      // Update profile picture if not set
+      if (!user.googlePicture && picture) {
+        updates.googlePicture = picture;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await user.update(updates);
+      }
     }
 
-    // Check if user is blocked
+    // 8. Check if user is blocked
     if (user.isBlocked) {
       return res.status(403).json({
         success: false,
-        message: "Your account is blocked",
+        message: "Your account has been blocked. Please contact support.",
       });
     }
 
-    // Generate JWT token
+    // 9. Generate JWT token
     const token = generateToken(user);
 
+    // 10. Return success response
     res.status(200).json({
       success: true,
       message: "Google Login Successful",
@@ -154,14 +209,30 @@ exports.googleLogin = async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
-        picture: picture || null,
+        picture: user.googlePicture || picture || null,
       },
     });
   } catch (error) {
     console.error("Google Login Error:", error);
+
+    // 11. Better error handling
+    if (error.message && error.message.includes("Token")) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired Google token",
+      });
+    }
+
+    if (error.message && error.message.includes("audience")) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Google client ID configuration",
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: "Google Login Failed",
+      message: "Google Login Failed. Please try again later.",
     });
   }
 };

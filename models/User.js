@@ -51,24 +51,40 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        unique: true,
+      },
+      googleId: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        unique: true,
+      },
+      provider: {
+        type: DataTypes.ENUM("local", "google"),
+        defaultValue: "local",
+        allowNull: false,
       },
       password: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
       phone: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
+      },
+      googlePicture: {
+        type: DataTypes.STRING(500),
+        allowNull: true,
       },
       role: {
         type: DataTypes.ENUM("user", "admin"),
         allowNull: false,
+        defaultValue: "user",
       },
       isBlocked: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
       },
-      
     },
     {
       sequelize,
