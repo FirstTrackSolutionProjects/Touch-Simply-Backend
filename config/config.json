@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "root123",
+    "password": "password",
     "database": "touchsimply",
     "host": "127.0.0.1",
     "dialect": "mysql"
@@ -9,13 +9,6 @@
   
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "dialect": "mysql",
-    "logging": false,
-    "dialectOptions": {
-      "ssl": {
-        "require": true,
-        "rejectUnauthorized": false
-      }
-    }
+    "dialect": "mysql"
   }
 }
