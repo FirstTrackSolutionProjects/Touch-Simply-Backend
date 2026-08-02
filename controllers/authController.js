@@ -94,6 +94,7 @@ exports.login = async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
+        picture: user.googlePicture || null, // ✅ ADD THIS LINE
       },
     });
   } catch (error) {
@@ -142,10 +143,10 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
-    // 5. Check if user exists by email or googleId
+    // 5. Check if user exists by email OR googleId (FIXED: using Op.or)
     let user = await User.findOne({
       where: {
-        [Op.and]: [{ email }, { googleId }],
+        [Op.or]: [{ email: email }, { googleId: googleId }],
       },
     });
 
@@ -156,7 +157,7 @@ exports.googleLogin = async (req, res) => {
         email: email,
         googleId: googleId,
         provider: "google",
-        password: null, // No password for Google users
+        password: null,
         phone: null,
         role: "user",
         isBlocked: false,
@@ -172,7 +173,7 @@ exports.googleLogin = async (req, res) => {
         updates.provider = "google";
       }
 
-      // Update name if empty or different (optional - only if you want to sync)
+      // Update name if empty
       if (!user.name || user.name === "User") {
         updates.name = name;
       }
