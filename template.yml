@@ -22,6 +22,18 @@ Parameters:
     Type: String
   GoogleClientSecret:
     Type: String
+  SmtpHost:
+    Type: String
+  SmtpPort:
+    Type: String
+  SmtpSecure:
+    Type: String
+  SmtpUser:
+    Type: String
+  SmtpPassword:
+    Type: String
+  ContactServiceEmail:
+    Type: String
 
 Resources:
   ApiGateway:
@@ -48,6 +60,12 @@ Resources:
           PORT: !Ref Port
           GOOGLE_CLIENT_ID: !Ref GoogleClientId
           GOOGLE_CLIENT_SECRET: !Ref GoogleClientSecret
+          SMTP_HOST: !Ref SmtpHost
+          SMTP_PORT: !Ref SmtpPort
+          SMTP_SECURE: !Ref SmtpSecure
+          SMTP_USER: !Ref SmtpUser
+          SMTP_PASSWORD: !Ref SmtpPassword
+          CONTACT_SERVICE_EMAIL: !Ref ContactServiceEmail
       Events:
         ProxyApi:
           Type: Api
