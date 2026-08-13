@@ -54,7 +54,13 @@ jobs:
               NodeEnv=${{ vars.NODE_ENV }} \
               GoogleClientId=${{ vars.GOOGLE_CLIENT_ID }} \
               GoogleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-              Port=${{ vars.PORT }} 
+              Port=${{ vars.PORT }} \
+              SmtpHost=${{ vars.SMTP_HOST }} \
+              SmtpPort=${{ vars.SMTP_PORT }} \
+              SmtpSecure=${{ vars.SMTP_SECURE }} \
+              SmtpUser=${{ vars.SMTP_USER }} \
+              SmtpPassword=${{ vars.SMTP_PASSWORD }} \
+              ContactServiceEmail=${{ vars.CONTACT_SERVICE_EMAIL }}
 
       - name: Run Sequelize Migrations
         run: npx sequelize-cli db:migrate --url ${{ vars.DATABASE_URL}}

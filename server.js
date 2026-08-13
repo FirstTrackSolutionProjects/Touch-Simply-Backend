@@ -12,6 +12,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
 const portfolioRoutes = require("./routes/portfolioRoutes");
 const logoRoutes = require("./routes/logoRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 const app = express();
 const serverless = require("serverless-http");
@@ -29,6 +30,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/resumes", resumeRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/logo", logoRoutes);
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
